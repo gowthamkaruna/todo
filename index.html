@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+<link rel="stylesheet" type="text/css" href="./style.css">
+  <body class="dark">
+    <header class="header">
+      <div class="header-element-container">
+        <h1 class="hero-heading">Todo</h1>
+        <button class="theme-btn">
+          <svg
+            class="theme-icon dark-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+          >
+            <path
+              fill="#FFF"
+              fill-rule="evenodd"
+              d="M13 0c.81 0 1.603.074 2.373.216C10.593 1.199 7 5.43 7 10.5 7 16.299 11.701 21 17.5 21c2.996 0 5.7-1.255 7.613-3.268C23.22 22.572 18.51 26 13 26 5.82 26 0 20.18 0 13S5.82 0 13 0z"
+            />
+          </svg>
+
+          <svg
+            class="theme-icon light-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+          >
+            <path
+              fill="#FFF"
+              fill-rule="evenodd"
+              d="M13 21a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-5.657-2.343a1 1 0 010 1.414l-2.121 2.121a1 1 0 01-1.414-1.414l2.12-2.121a1 1 0 011.415 0zm12.728 0l2.121 2.121a1 1 0 01-1.414 1.414l-2.121-2.12a1 1 0 011.414-1.415zM13 8a5 5 0 110 10 5 5 0 010-10zm12 4a1 1 0 110 2h-3a1 1 0 110-2h3zM4 12a1 1 0 110 2H1a1 1 0 110-2h3zm18.192-8.192a1 1 0 010 1.414l-2.12 2.121a1 1 0 01-1.415-1.414l2.121-2.121a1 1 0 011.414 0zm-16.97 0l2.121 2.12A1 1 0 015.93 7.344L3.808 5.222a1 1 0 011.414-1.414zM13 0a1 1 0 011 1v3a1 1 0 11-2 0V1a1 1 0 011-1z"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+    <main class="main">
+      <div class="user-input-container">
+        <div class="fake-checkbox"></div>
+        <input
+          class="user-input"
+          type="text"
+          placeholder="Create a new todo..."
+        />
+      </div>
+      <div class="todo-list-container">
+        <form class="todo-list"></form>
+        <div class="todo-list-bottom">
+          <p class="item-left-text">
+            <span class="item-left">0</span> items left
+          </p>
+          <div class="option-bar">
+            <div class="filter-btn-container">
+              <button class="filter-btn filter-btn--all filter-btn--selected">
+                All
+              </button>
+              <button class="filter-btn filter-btn--active">Active</button>
+              <button class="filter-btn filter-btn--completed">
+                Completed
+              </button>
+            </div>
+            <button class="clear-completed-btn">Clear Completed</button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      <!-- <p class="footer-text">Drag and drop to reorder list</p>
+
+      <div class="attribution">
+        Challenge by
+        <a href="https://www.frontendmentor.io?ref=challenge" target="_blank"
+          >Frontend Mentor</a
+        >. Coded by Migg Hsu.
+      </div> -->
+    </footer>
+</body>
+</html>
+
+<script type="text/javascript">
+  class ToDo {
+  constructor(toDoList) {
+    this.toDoList = toDoList;
+    this.id = 0;
+    this.item = 0;
+    this.draggables;
+    this.checkboxes;
+    this.removeBtns;
+    this.checkboxesArray = [];
+    this.uncheckedCheckboxesArray = [];
+    this.checkedCheckboxesArray = [];
+  }
+
+  addNewTodo(newToDo) {
+    this.id += 1;
+    this.item += 1;
+    const newDiv = document.createElement("div");
+    newDiv.classList = "todo draggable";
+    newDiv.draggable = true;
+    const newToDoCheckbox = document.createElement("input");
+    const label = document.createElement("label");
+    const removeBtn = document.createElement("button");
+    const removeImg = document.createElement("img");
+    newToDoCheckbox.type = "checkbox";
+    newToDoCheckbox.id = `todo-${this.id}`;
+    newToDoCheckbox.name = "todo-list";
+    newToDoCheckbox.value = `todo-${this.id}`;
+    newToDoCheckbox.classList = "checkbox-round";
+    removeBtn.classList = "remove-todo-btn";
+    removeImg.classList = "remove-icon";
+    removeImg.src = "https://svgur.com/i/_bQ.svg";
+    label.htmlFor = `todo-${this.id}`;
+    label.appendChild(document.createTextNode(newToDo));
+    removeBtn.appendChild(removeImg);
+    newDiv.appendChild(newToDoCheckbox);
+    newDiv.appendChild(label);
+    newDiv.appendChild(removeBtn);
+    this.toDoList.appendChild(newDiv);
+    this.renderItem();
+  }
+
+  renderItem() {
+    itemEl.innerHTML = this.item;
+  }
+
+  updateDraggables() {
+    this.draggables = this.toDoList.querySelectorAll(".draggable");
+
+    this.draggables.forEach((draggable) => {
+      draggable.addEventListener("dragstart", function () {
+        draggable.classList.add("dragging");
+      });
+
+      draggable.addEventListener("dragend", function () {
+        draggable.classList.remove("dragging");
+      });
+    });
+  }
+
+  updateRemoveBtn() {
+    this.removeBtns = this.toDoList.querySelectorAll(".remove-todo-btn");
+    this.removeBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.target.closest(".todo").remove();
+        this.updateCheckboxes();
+      });
+    });
+  }
+
+  renderRemoveBtn() {
+    this.draggables.forEach((draggable) => {
+      draggable.addEventListener("mouseover", function () {
+        draggable.classList.add("show");
+      });
+      draggable.addEventListener("mouseout", function () {
+        draggable.classList.remove("show");
+      });
+    });
+  }
+
+  getDragAfterEl(y) {
+    const draggableEl = [
+      ...this.toDoList.querySelectorAll(".draggable:not(.dragging)"),
+    ];
+    return draggableEl.reduce(
+      (closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      },
+      { offset: Number.NEGATIVE_INFINITY }
+    ).element;
+  }
+
+  updateCheckboxes() {
+    this.checkboxes = this.toDoList.querySelectorAll("input[type='checkbox']");
+    this.checkboxesArray = Array.apply(null, this.checkboxes);
+    this.uncheckedCheckboxesArray = this.checkboxesArray.filter(
+      (checkbox) => !checkbox.checked
+    );
+    this.checkedCheckboxesArray = this.checkboxesArray.filter(
+      (checkbox) => checkbox.checked
+    );
+
+    this.item = this.uncheckedCheckboxesArray.length;
+
+    this.renderItem();
+  }
+
+  filterAll() {
+    if (!this.checkboxes) return;
+    this.checkboxes.forEach((checkbox) => {
+      checkbox.closest(".todo").style.display = "grid";
+    });
+  }
+
+  filterActive() {
+    if (!this.checkboxes) return;
+    this.checkboxes.forEach((checkbox) => {
+      if (checkbox.checked) {
+        checkbox.closest(".todo").style.display = "none";
+      } else {
+        checkbox.closest(".todo").style.display = "grid";
+      }
+    });
+  }
+
+  filterCompleted() {
+    if (!this.checkboxes) return;
+    this.checkboxes.forEach((checkbox) => {
+      if (!checkbox.checked) {
+        checkbox.closest(".todo").style.display = "none";
+      } else {
+        checkbox.closest(".todo").style.display = "grid";
+      }
+    });
+  }
+
+  clearCompleted() {
+    if (!this.checkboxes) return;
+    this.checkboxes.forEach((checkbox) => {
+      if (checkbox.checked) {
+        checkbox.closest(".todo").remove();
+      }
+    });
+  }
+}
+
+const body = document.querySelector("body");
+const toDoList = document.querySelector(".todo-list");
+const userInputEl = document.querySelector(".user-input");
+const itemEl = document.querySelector(".item-left");
+const themeBtn = document.querySelector(".theme-btn");
+const allBtn = document.querySelector(".filter-btn--all");
+const activeBtn = document.querySelector(".filter-btn--active");
+const completedBtn = document.querySelector(".filter-btn--completed");
+const clearCompletedBtn = document.querySelector(".clear-completed-btn");
+
+const toDoApp = new ToDo(toDoList);
+
+// Add new todo
+userInputEl.addEventListener("keyup", function (e) {
+  e.preventDefault();
+  if (e.key === "Enter") {
+    const newToDo = userInputEl.value;
+    toDoApp.addNewTodo(newToDo);
+    userInputEl.value = "";
+    toDoApp.updateDraggables();
+    toDoApp.updateCheckboxes();
+    toDoApp.updateRemoveBtn();
+    toDoApp.renderRemoveBtn();
+
+    toDoApp.checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener(
+        "change",
+        toDoApp.updateCheckboxes.bind(toDoApp)
+      );
+    });
+  }
+});
+
+// Filter button
+allBtn.addEventListener("click", function () {
+  allBtn.classList.add("filter-btn--selected");
+  activeBtn.classList.remove("filter-btn--selected");
+  completedBtn.classList.remove("filter-btn--selected");
+  toDoApp.filterAll();
+});
+
+activeBtn.addEventListener("click", function () {
+  activeBtn.classList.add("filter-btn--selected");
+  allBtn.classList.remove("filter-btn--selected");
+  completedBtn.classList.remove("filter-btn--selected");
+  toDoApp.filterActive();
+});
+
+completedBtn.addEventListener("click", function () {
+  allBtn.classList.remove("filter-btn--selected");
+  activeBtn.classList.remove("filter-btn--selected");
+  completedBtn.classList.add("filter-btn--selected");
+  toDoApp.filterCompleted();
+});
+
+clearCompletedBtn.addEventListener("click", function () {
+  toDoApp.clearCompleted();
+});
+
+// Dragging feature
+toDoApp.toDoList.addEventListener("dragover", function (e) {
+  e.preventDefault();
+  const afterEl = toDoApp.getDragAfterEl(e.clientY);
+  const draggable = document.querySelector(".dragging");
+  if (afterEl == null) {
+    toDoApp.toDoList.appendChild(draggable);
+  } else {
+    toDoApp.toDoList.insertBefore(draggable, afterEl);
+  }
+});
+
+// Theme change
+themeBtn.addEventListener("click", function () {
+  body.classList.toggle("dark");
+  body.classList.toggle("light");
+});
+
+</script>
